@@ -2,6 +2,7 @@ import 'package:food_dose/Utility/colors..dart';
 import 'package:food_dose/view/signle_foods.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
+import 'package:get/route_manager.dart';
 import 'package:sizer/sizer.dart';
 
 class SingleCategoryProduct extends StatefulWidget {
@@ -57,7 +58,8 @@ class _SingleCategoryProductState extends State<SingleCategoryProduct> {
               itemBuilder: (_, index){
                 return Bounce(
                   onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SingleFoods()));
+                    Get.to(()=>SingleFoods(id: '1'));
+                    // Get.to(()=>SingleFoods(id: snapshot.data[index]['_id'].toString(),));
 
                   },
                   duration: Duration(milliseconds: 80),

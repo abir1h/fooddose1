@@ -110,51 +110,50 @@ class _LoginPagesState extends State<LoginPages> {
             ),
 
             SizedBox(height: 20,),
-            Divider(height: 1, color: Colors.grey.shade300,),
             SizedBox(height: 20,),
-            Center(
-              child: Text("I don't have account.",
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            //Login button with email
-            Bounce(
-
-              duration: Duration(milliseconds: 80),
-              onPressed: (){},
-              child: Container(
-                margin: EdgeInsets.only(top: 10,left: 20, right: 20),
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 10,
-                        spreadRadius: 2,
-                        color: Colors.grey.shade300,
-                        offset: Offset(0, 2),
-                      )
-                    ]
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset("assets/images/google.png", height: 30, width: 30,),
-                    SizedBox(width: 15,),
-                    Text("Sign up with email ",
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            // Center(
+            //   child: Text("I don't have account.",
+            //     style: TextStyle(
+            //       fontSize: 12.sp,
+            //       fontWeight: FontWeight.bold,
+            //     ),
+            //   ),
+            // ),
+            // //Login button with email
+            // Bounce(
+            //
+            //   duration: Duration(milliseconds: 80),
+            //   onPressed: (){},
+            //   child: Container(
+            //     margin: EdgeInsets.only(top: 10,left: 20, right: 20),
+            //     padding: EdgeInsets.all(15),
+            //     decoration: BoxDecoration(
+            //         borderRadius: BorderRadius.circular(100),
+            //         color: Colors.white,
+            //         boxShadow: [
+            //           BoxShadow(
+            //             blurRadius: 10,
+            //             spreadRadius: 2,
+            //             color: Colors.grey.shade300,
+            //             offset: Offset(0, 2),
+            //           )
+            //         ]
+            //     ),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       children: [
+            //         Image.asset("assets/images/google.png", height: 30, width: 30,),
+            //         SizedBox(width: 15,),
+            //         Text("Sign up with email ",
+            //           style: TextStyle(
+            //             fontSize: 12.sp,
+            //             fontWeight: FontWeight.w800,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
 
           ],
         ),

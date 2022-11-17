@@ -1,6 +1,9 @@
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:food_dose/view/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../widget/ktext.dart';
 
@@ -39,7 +42,18 @@ class _SettingPageState extends State<SettingPage> {
        subtitle: KText(text: 'Light',color: Colors.grey.shade300,fontWeight: FontWeight.bold,fontSize: 12,),
        ),
        InkWell(
-         onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPages())),
+         onTap: ()async{
+           SharedPreferences localStore = await SharedPreferences.getInstance();
+           localStore.remove('token');
+           // await DefaultCacheManager().emptyCache();
+           var tempDir = await getTemporaryDirectory();
+
+           if (tempDir.existsSync()) {
+             tempDir.deleteSync(recursive: true);
+           }
+           Get.to(()=>LoginPages());
+
+         },
          child: ListTile(
          title: KText(text: 'Login',color: Colors.black,fontWeight: FontWeight.bold,),
          ),

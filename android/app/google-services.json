@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "706644030797-n6en2cp02ukom9u2hr2v5nb3rjd81jig.apps.googleusercontent.com",
+          "client_id": "706644030797-peabdgkeou0k68u41p7mrukn984a7vpt.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.food.food_dose",
-            "certificate_hash": "eb72d887914c7409774ce83776247fef36fb445f"
+            "certificate_hash": "a07301a82847423a947f917f97aa1740d6a39f72"
           }
         },
         {

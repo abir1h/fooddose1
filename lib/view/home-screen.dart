@@ -14,10 +14,13 @@ import 'package:food_dose/view/single-cateogry-product.dart';
 import 'package:food_dose/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
+import 'package:get/route_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
+
+import 'resturent_foods/resturent_foods.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -48,6 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
     // TODO: implement initState
     UserLocation();
     banner=get_banners();
+    slider=get_banners2();
+    foods=get_food('1','4');
   }
   void UserLocation()async{
     SharedPreferences localStore = await SharedPreferences.getInstance();
@@ -77,6 +82,38 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   }
+  List food_cat_image = [
+    "assets/images/Arabian_Food.jpg",
+    "assets/images/Bakery.jpg",
+    "assets/images/BBQ.png",
+    "assets/images/Biryani.jpg",
+    "assets/images/Bread.png",
+    "assets/images/Breakfast.jpg",
+    "assets/images/Burgers.png",
+    "assets/images/Chinese.png",
+    "assets/images/Coffee.jpg",
+    "assets/images/FastFood.jpg",
+    "assets/images/ICECream.png",
+    "assets/images/ItalianFood.jpg",
+    "assets/images/JapaneseFood.jpg",
+    "assets/images/Juice.jpg",
+    "assets/images/Kabab.jpg",
+    "assets/images/NaanBread.gif",
+    "assets/images/Noodles.png",
+    "assets/images/Pasta.png",
+    "assets/images/Pizza.jpg",
+    "assets/images/Sandwiches.png",
+    "assets/images/Seafood.jpg",
+    "assets/images/Shawarma.jpg",
+    "assets/images/Softdrink.png",
+    "assets/images/SoupSalad.png",
+    "assets/images/Steaks.jpg",
+    "assets/images/StreetFood.jpg",
+    "assets/images/ThaiFood.png",
+
+  ];
+  List Food_catagory=['Arabian-Food','Bakery','BBQ','BIRYANI','BREAD','Breakfast','Burgers','Chinese','Coffee','Fast Food','Ice Cream','Italian Food','Japanese Food','Juice','Kabab','Naan Bread','Noodles','Pasta','Pizza','street food','Sandwiches','Shawarma','Seafood','Soup & Salad','Soft drink','Steaks','Thai Food'
+  ];
   Future get_banners() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -86,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'authorization': "Bearer $token"
     };
 
-    var response = await http.get(Uri.parse(AppUrl.banner),
+    var response = await http.get(Uri.parse(AppUrl.banner+'3'),
         headers: requestHeaders);
     if (response.statusCode == 200) {
       print('Get post collected' + response.body);
@@ -99,8 +136,56 @@ class _HomeScreenState extends State<HomeScreen> {
       return userData1;
     }
   }
-  Future? banner;
+  Future? slider;
+  Future get_banners2() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
 
+    Map<String, String> requestHeaders = {
+      'Accept': 'application/json',
+      'authorization': "Bearer $token"
+    };
+
+    var response = await http.get(Uri.parse(AppUrl.banner+'2'),
+        headers: requestHeaders);
+    if (response.statusCode == 200) {
+      print('Get post collected' + response.body);
+      var userData1 = jsonDecode(response.body)['allBanner'];
+
+      return userData1;
+    } else {
+      print("post have no Data${response.body}");
+      var userData1 = jsonDecode(response.body)['allBanner'];
+      return userData1;
+    }
+  }
+  Future get_food(String page,String limit) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    Map<String, String> requestHeaders = {
+      'Accept': 'application/json',
+      'authorization': "Bearer $token"
+    };
+
+    var response = await http.get(Uri.parse(AppUrl.allfoods+'page='+page+"&"+'limit='+limit),
+        headers: requestHeaders);
+    if (response.statusCode == 200) {
+      print('Get post collected' + response.body);
+      var userData1 = jsonDecode(response.body)['allFoods'];
+
+      return userData1;
+    } else {
+      print("post have no Data${response.body}");
+      var userData1 = jsonDecode(response.body)['allFoods'];
+      return userData1;
+    }
+  }
+  Future? banner,foods;
+show()async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  print(prefs.getString('token'));
+}
 
   @override
   Widget build(BuildContext context) {
@@ -166,46 +251,51 @@ class _HomeScreenState extends State<HomeScreen> {
                    ),
                    IconButton(
                        onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingPage())),
-                       icon: Icon(Icons.person_outline, size: 30, color:appColors.mainColor,)),
+                       icon: Icon(Icons.search, size: 30, color:appColors.mainColor,)),
                  ],
                ),
              ),
-             Container(
-               width: width,
-               padding: EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 15),
-               decoration: BoxDecoration(
-                 color: appColors.mainColor.withOpacity(0.1),
-                 // boxShadow: [
-                 //   BoxShadow(
-                 //       blurRadius:5,
-                 //       spreadRadius: 1,
-                 //       offset: Offset(0,2),
-                 //       color: Colors.grey.shade200
-                 //   )
-                 // ],
-               ),
-               child: RichText(
-                   text: TextSpan(
-                       children: [
-                         TextSpan(
-                             text: "#FOODDOSS34 ",
-                             style: TextStyle(
-                                 fontWeight: FontWeight.bold,
-                                 fontSize: 10.sp,
-                                 color: appColors.mainColor
-                             )
-                         ),
+             InkWell(
+               onTap: (){
+                 show();
+               },
+               child: Container(
+                 width: width,
+                 padding: EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 15),
+                 decoration: BoxDecoration(
+                   color: appColors.mainColor.withOpacity(0.1),
+                   // boxShadow: [
+                   //   BoxShadow(
+                   //       blurRadius:5,
+                   //       spreadRadius: 1,
+                   //       offset: Offset(0,2),
+                   //       color: Colors.grey.shade200
+                   //   )
+                   // ],
+                 ),
+                 child: RichText(
+                     text: TextSpan(
+                         children: [
+                           TextSpan(
+                               text: "#FOODDOSS34 ",
+                               style: TextStyle(
+                                   fontWeight: FontWeight.bold,
+                                   fontSize: 10.sp,
+                                   color: appColors.mainColor
+                               )
+                           ),
 
-                         TextSpan(
-                             text: "Use this code to get 45% Discount",
-                             style: TextStyle(
-                                 fontWeight: FontWeight.w400,
-                                 fontSize: 10.sp,
-                                 color: appColors.mainColor
-                             )
-                         )
-                       ]
-                   )),
+                           TextSpan(
+                               text: "Use this code to get 45% Discount",
+                               style: TextStyle(
+                                   fontWeight: FontWeight.w400,
+                                   fontSize: 10.sp,
+                                   color: appColors.mainColor
+                               )
+                           )
+                         ]
+                     )),
+               ),
              ),
              Expanded(
                child: Padding(
@@ -303,7 +393,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                          decoration: BoxDecoration(
                                                              borderRadius: BorderRadius.circular(10),
                                                              image: DecorationImage(
-                                                               image: NetworkImage( Appusnapshot.data[itemIndex]['image'],),
+                                                               image: NetworkImage( AppUrl.picurl+snapshot.data[itemIndex]['image'],),
                                                                fit: BoxFit.cover,
                                                              )
                                                          ),
@@ -365,7 +455,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                          : Text('No data');
                                    }
                                }
-                               return CircularProgressIndicator();
+                               return Center(child: CircularProgressIndicator());
                              })),
                      SizedBox(height: 20,),
 
@@ -391,7 +481,7 @@ class _HomeScreenState extends State<HomeScreen> {
                        height: 60,
                        child: ListView.separated(
                          scrollDirection: Axis.horizontal,
-                         itemCount: 10,
+                         itemCount: Food_catagory.length,
                          itemBuilder: (context, index){
                            return Bounce(
                              onPressed: (){
@@ -399,7 +489,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                  categoryselect.clear();
                                  categoryselect.add(index);
                                });
-                               Navigator.push(context, MaterialPageRoute(builder: (context)=>SingleCategoryProduct(Category: "Category Name")));
+                               Navigator.push(context, MaterialPageRoute(builder: (context)=>SingleCategoryProduct(Category: Food_catagory[index])));
                              },
                              duration: Duration(milliseconds: 80),
                              child: Container(
@@ -421,14 +511,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                  children: [
                                    ClipRRect(
                                      borderRadius: BorderRadius.circular(100),
-                                     child: Image.asset("assets/category/c1.jpeg", height: 50, width: 50, fit: BoxFit.cover,),
+                                     child: Image.asset(food_cat_image[index], height: 50, width: 50, fit: BoxFit.cover,),
                                    ),
 
-                                   Text("Category Name",
-                                     style: TextStyle(
-                                       fontSize: 12.sp,
-                                       fontWeight: FontWeight.w400,
-                                       color: categoryselect.isNotEmpty && categoryselect[0] == index?appColors.white: appColors.mainColor,
+                                   Padding(
+                                     padding: const EdgeInsets.all(8.0),
+                                     child: Text(Food_catagory[index],
+                                       style: TextStyle(
+                                         fontSize: 12.sp,
+                                         fontWeight: FontWeight.w400,
+                                         color: categoryselect.isNotEmpty && categoryselect[0] == index?appColors.white: appColors.mainColor,
+                                       ),
                                      ),
                                    )
                                  ],
@@ -464,24 +557,357 @@ class _HomeScreenState extends State<HomeScreen> {
                              ),
                            ],
                          ),
-                         TextButton(onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductList()))
+                         TextButton(
+                             onPressed: ()=>
+                                 Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductList()))
                              , child: Text("SEE ALL"))
                        ],
                      ),
-                     buildMostPopular(width),
+                     Container(
+                         child: FutureBuilder(
+                             future: foods,
+                             builder: (_, AsyncSnapshot snapshot) {
+                               print(snapshot.data);
+                               switch (snapshot.connectionState) {
+                                 case ConnectionState.waiting:
+                                   return SizedBox(
+                                     width: MediaQuery.of(context).size.width,
+                                     height: MediaQuery.of(context).size.height/15,
+                                     child: Shimmer.fromColors(
+                                       baseColor: Colors.grey.withOpacity(.3),
+                                       highlightColor: Colors.grey.withOpacity(.1),
+                                       child: ListView.builder(
+                                         physics: AlwaysScrollableScrollPhysics(),
+                                         itemBuilder: (_, __) => Padding(
+                                           padding: const EdgeInsets.only(bottom: 8.0),
+                                           child: Row(
+                                             crossAxisAlignment:
+                                             CrossAxisAlignment.start,
+                                             children: <Widget>[
+                                               Container(
+                                                 width: 48.0,
+                                                 height: 48.0,
+                                                 color: Colors.white,
+                                               ),
+                                               const Padding(
+                                                 padding: EdgeInsets.symmetric(
+                                                     horizontal: 8.0),
+                                               ),
+                                               Expanded(
+                                                 child: Column(
+                                                   crossAxisAlignment:
+                                                   CrossAxisAlignment.start,
+                                                   children: <Widget>[
+                                                     Container(
+                                                       width: double.infinity,
+                                                       height: 8.0,
+                                                       color: Colors.white,
+                                                     ),
+                                                     const Padding(
+                                                       padding: EdgeInsets.symmetric(
+                                                           vertical: 2.0),
+                                                     ),
+                                                     Container(
+                                                       width: double.infinity,
+                                                       height: 8.0,
+                                                       color: Colors.white,
+                                                     ),
+                                                     const Padding(
+                                                       padding: EdgeInsets.symmetric(
+                                                           vertical: 2.0),
+                                                     ),
+                                                     Container(
+                                                       width: 40.0,
+                                                       height: 8.0,
+                                                       color: Colors.white,
+                                                     ),
+                                                   ],
+                                                 ),
+                                               )
+                                             ],
+                                           ),
+                                         ),
+                                         itemCount: 6,
+                                       ),
+                                     ),
+                                   );
+                                 default:
+                                   if (snapshot.hasError) {
+                                     Text('Error: ${snapshot.error}');
+                                   } else {
+                                     return snapshot.hasData
+                                         ? snapshot.data.length > 0
+                                         ? Column(
+                                       children: [
+                                         Container(
+                                           width: width,
+                                           height: 250,
+                                           child: ListView.builder(
+                                               padding: EdgeInsets.only(top: 20, bottom: 20),
+                                               scrollDirection: Axis.horizontal,
+                                               itemCount: snapshot.data.length,
+                                               itemBuilder: (context, index){
+                                                 return Bounce(
+                                                   duration: Duration(milliseconds: 80),
+                                                   onPressed: ()=>
 
+                                                       Get.to(()=>SingleFoods(id: snapshot.data[index]['_id'].toString(),)),
+                                                   child: Container(
+                                                     width: 170,
+                                                     height: 300,
+
+                                                     margin: EdgeInsets.only(left: 10, right: 10),
+                                                     decoration: BoxDecoration(
+                                                       // color: appColors.white,
+                                                       borderRadius: BorderRadius.circular(10),
+                                                       // boxShadow: [
+                                                       //   BoxShadow(
+                                                       //     color: Colors.grey.withOpacity(0.5),
+                                                       //     spreadRadius: 5,
+                                                       //     blurRadius: 7,
+                                                       //     offset: Offset(0, 3), // changes position of shadow
+                                                       //   ),
+                                                       // ],
+                                                     ),
+                                                     child: Stack(
+                                                       children: [
+                                                         ClipRRect(
+                                                           borderRadius: BorderRadius.circular(10),
+                                                           child: Image.network(AppUrl.picurl+snapshot.data[index]['image'],
+                                                             height: 200,
+                                                             width: 170,
+                                                             fit: BoxFit.cover,
+                                                           ),
+                                                         ),
+                                                         Container(
+                                                           height: 200,
+                                                           width: 170,
+                                                           decoration: BoxDecoration(
+                                                             borderRadius: BorderRadius.circular(10),
+                                                             color: appColors.blactText.withOpacity(0.5),
+                                                           ),
+                                                         ),
+                                                         Positioned(
+                                                           right: 10, top: 10,
+                                                           child: Container(
+                                                             padding: EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                                             decoration: BoxDecoration(
+                                                               borderRadius: BorderRadius.circular(10),
+                                                               color: appColors.mainColor,
+                                                             ),
+                                                             child: Center(child: Text("4.5*", style: TextStyle(color: Colors.white),)),
+                                                           ),
+                                                         ),
+                                                         Positioned(
+                                                           top: 130,
+                                                           left: 10,
+                                                           child: Container(
+                                                             width: 120,
+
+                                                             child: Text(snapshot.data[index]['itemName'],
+                                                               overflow: TextOverflow.ellipsis,
+                                                               style: TextStyle(
+                                                                 fontSize: 14.sp,
+                                                                 fontWeight: FontWeight.w400,
+                                                                 color: Colors.white,
+                                                               ),
+                                                             ),
+                                                           ),
+                                                         ),
+                                                         Positioned(
+                                                           top: 150,
+                                                           left: 10,
+                                                           child: Container(
+                                                             child: Text(snapshot.data[index]['categoryName'],
+
+                                                               style: TextStyle(
+                                                                 fontSize: 12,
+                                                                 fontWeight: FontWeight.w400,
+                                                                 color: Colors.white70,
+                                                               ),
+                                                             ),
+                                                           ),
+                                                         ),
+                                                         Positioned(
+                                                           top: 165,
+                                                           left: 10,
+                                                           right: 10,
+                                                           child: Row(
+                                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                             children: [
+                                                               Row(
+
+                                                                 children: [
+                                                                   Icon(
+                                                                     Icons.watch_later_outlined,
+                                                                     color: Colors.white,
+                                                                   ),
+                                                                   SizedBox(width: 4,),
+                                                                   Text(snapshot.data[index]['deliveryTime']+ ' Min',
+                                                                     style: TextStyle(
+                                                                       fontSize: 12.sp,
+                                                                       fontWeight: FontWeight.w400,
+                                                                       color: Colors.white,
+                                                                     ),
+                                                                   ),
+                                                                 ],
+                                                               ),
+                                                               Row(
+                                                                 children: [
+                                                                   int.parse(snapshot.data[index]['discountPrice'].toString())>0? Text(snapshot.data[index]['withOutDiscountPrice'].toString(),
+                                                                     style: TextStyle(
+                                                                       decoration: TextDecoration.lineThrough,
+                                                                         fontWeight: FontWeight.bold,
+                                                                         fontSize: 12.sp,
+                                                                         color: Colors.white
+                                                                     ),
+                                                                   ):Container(),
+                                                                   SizedBox(width: 10,),
+                                                                   Text(snapshot.data[index]['price'].toString(),
+                                                                     style: TextStyle(
+                                                                         fontWeight: FontWeight.bold,
+                                                                         fontSize: 10.sp,
+                                                                         color: Colors.white
+                                                                     ),)
+                                                                 ],
+                                                               )
+                                                             ],
+                                                           ),
+                                                         ),
+
+                                                       ],
+                                                     ),
+                                                   ),
+                                                 );
+                                               }
+                                           ),
+                                         )
+                                       ],
+                                     )
+                                         : Center(
+                                         child: Column(
+                                           children: [
+                                             SizedBox(
+                                               height: height / 10,
+                                             ),
+                                             Text('No Post Yet!!')
+                                           ],
+                                         ))
+                                         : Text('No data');
+                                   }
+                               }
+                               return CircularProgressIndicator();
+                             })),
                      SizedBox(height: 20,),
                      //banner
                      Container(
-                       width: width,
-                       height: 120,
-                       decoration: BoxDecoration(
-                           image: DecorationImage(
-                             image: AssetImage("assets/images/s2.png"),
-                             fit: BoxFit.cover,
-                           )
-                       ),
-                     ),
+                         width: width,
+                         height: 125,
+                         child: FutureBuilder(
+                             future: slider,
+                             builder: (_, AsyncSnapshot snapshot) {
+                               print(snapshot.data);
+                               switch (snapshot.connectionState) {
+                                 case ConnectionState.waiting:
+                                   return SizedBox(
+                                     width: MediaQuery.of(context).size.width,
+                                     height: MediaQuery.of(context).size.height,
+                                     child: Shimmer.fromColors(
+                                       baseColor: Colors.grey.withOpacity(.3),
+                                       highlightColor: Colors.grey.withOpacity(.1),
+                                       child: ListView.builder(
+                                         physics: AlwaysScrollableScrollPhysics(),
+                                         itemBuilder: (_, __) => Padding(
+                                           padding: const EdgeInsets.only(bottom: 8.0),
+                                           child: Row(
+                                             crossAxisAlignment:
+                                             CrossAxisAlignment.start,
+                                             children: <Widget>[
+                                               Container(
+                                                 width: 48.0,
+                                                 height: 48.0,
+                                                 color: Colors.white,
+                                               ),
+                                               const Padding(
+                                                 padding: EdgeInsets.symmetric(
+                                                     horizontal: 8.0),
+                                               ),
+                                               Expanded(
+                                                 child: Column(
+                                                   crossAxisAlignment:
+                                                   CrossAxisAlignment.start,
+                                                   children: <Widget>[
+                                                     Container(
+                                                       width: double.infinity,
+                                                       height: 8.0,
+                                                       color: Colors.white,
+                                                     ),
+                                                     const Padding(
+                                                       padding: EdgeInsets.symmetric(
+                                                           vertical: 2.0),
+                                                     ),
+                                                     Container(
+                                                       width: double.infinity,
+                                                       height: 8.0,
+                                                       color: Colors.white,
+                                                     ),
+                                                     const Padding(
+                                                       padding: EdgeInsets.symmetric(
+                                                           vertical: 2.0),
+                                                     ),
+                                                     Container(
+                                                       width: 40.0,
+                                                       height: 8.0,
+                                                       color: Colors.white,
+                                                     ),
+                                                   ],
+                                                 ),
+                                               )
+                                             ],
+                                           ),
+                                         ),
+                                         itemCount: 6,
+                                       ),
+                                     ),
+                                   );
+                                 default:
+                                   if (snapshot.hasError) {
+                                     Text('Error: ${snapshot.error}');
+                                   } else {
+                                     return snapshot.hasData
+                                         ? snapshot.data.length > 0
+                                         ? ListView.builder(
+                                       itemCount: snapshot.data.length,
+                                       shrinkWrap: true,
+                                         scrollDirection: Axis.horizontal,
+                                       itemBuilder: (_,index){
+
+                                           return   Container(
+                                             width: width,
+                                             height: 120,
+                                             decoration: BoxDecoration(
+                                                 image: DecorationImage(
+                                                   image: AssetImage("assets/images/s2.png"),
+                                                   fit: BoxFit.cover,
+                                                 )
+                                             ),
+                                           );
+                                     },)
+                                         : Center(
+                                         child: Column(
+                                           children: [
+                                             SizedBox(
+                                               height: height / 10,
+                                             ),
+                                             Text('No Post Yet!!')
+                                           ],
+                                         ))
+                                         : Text('No data');
+                                   }
+                               }
+                               return Center(child: CircularProgressIndicator());
+                             })),
+
 
                      SizedBox(height: 20,),
                      Row(
@@ -504,7 +930,9 @@ class _HomeScreenState extends State<HomeScreen> {
                              ),
                            ],
                          ),
-                         TextButton(onPressed: (){}, child: Text("SEE ALL"))
+                         TextButton(onPressed: (){
+
+                         }, child: Text("SEE ALL"))
                        ],
                      ),
                      buildHomeResturents(width),
@@ -533,12 +961,11 @@ class _HomeScreenState extends State<HomeScreen> {
              child: FutureBuilder(
                future: getResturentFuture,
                builder: (_, AsyncSnapshot<dynamic> snapshot){
-                 print(snapshot.data.length);
                  if(snapshot.connectionState == ConnectionState.waiting){
                    return ListView.builder(
                        padding: EdgeInsets.only(top: 20, bottom: 20),
                        scrollDirection: Axis.horizontal,
-                       itemCount: snapshot.data.length,
+                       itemCount: 10,
                        itemBuilder: (context, index){
                          return Shimmer.fromColors(
                            baseColor: Colors.white,
@@ -567,117 +994,131 @@ class _HomeScreenState extends State<HomeScreen> {
                          var lng = snapshot.data[0]["location"]["coordinates"][1];
                          getAddressFromLatLng(context,lat, lng, index);
 
-                         var url = "https://fooddoose.payrapay.com/public/uploads/";
-                         return Container(
-                           height: 150,
-                           width: width/1.3,
+                         var url = "https://api.fooddoose.com/public/uploads/";
+                         return InkWell(
+                           onTap: (){
+                             Get.to(() =>  resturent_foods(name: snapshot.data[index]["shopName"],
+                               id: snapshot.data[index]["_id"].toString(),location: 'sfg',
+                               image:'https://api.fooddoose.com/public/uploads/${snapshot.data[index]["image"]}',
+                               close_hour:snapshot.data[index]["closeHour"] ,
+                               open_hour:snapshot.data[index]["openHour"] ,
+                               logo: 'https://api.fooddoose.com/public/uploads/${snapshot.data[index]["logo"]}',
+                               phone: snapshot.data[index]["number"] ,
 
-                           margin: EdgeInsets.only(left: 10, right: 10),
-                           decoration: BoxDecoration(
-                             // color: appColors.white,
-                             borderRadius: BorderRadius.circular(10),
 
-                           ),
-                           child: Stack(
-                             children: [
-                               ClipRRect(
-                                 borderRadius: BorderRadius.circular(10),
-                                 child: Image.network('https://fooddoose.payrapay.com/public/uploads/${snapshot.data[index]["image"]}',
-                                   height: 150,
-                                   width: width/1.3,
-                                   fit: BoxFit.cover,
-                                 ),
-                               ),
-                               Container(
-                                 height: 150,
-                                 width: width/1.3,
-                                 decoration: BoxDecoration(
+                               ));
+                           },
+                           child: Container(
+                             height: 150,
+                             width: width/1.3,
+
+                             margin: EdgeInsets.only(left: 10, right: 10),
+                             decoration: BoxDecoration(
+                               // color: appColors.white,
+                               borderRadius: BorderRadius.circular(10),
+
+                             ),
+                             child: Stack(
+                               children: [
+                                 ClipRRect(
                                    borderRadius: BorderRadius.circular(10),
-                                   color: appColors.blactText.withOpacity(0.5),
-                                 ),
-                               ),
-                               // Positioned(
-                               //   right: 10, top: 10,
-                               //   child: Container(
-                               //     padding: EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-                               //     decoration: BoxDecoration(
-                               //       borderRadius: BorderRadius.circular(10),
-                               //       color: appColors.mainColor,
-                               //     ),
-                               //     child: Center(child: Text("4.5*", style: TextStyle(color: Colors.white),)),
-                               //   ),
-                               // ),
-                               Positioned(
-                                 top: 80,
-                                 left: 10,
-                                 child: Text("${snapshot.data[index]["shopName"]}",
-                                   style: TextStyle(
-                                     fontSize: 14,
-                                     fontWeight: FontWeight.w400,
-                                     color: Colors.white,
+                                   child: Image.network('https://api.fooddoose.com/public/uploads/${snapshot.data[index]["image"]}',
+                                     height: 150,
+                                     width: width/1.3,
+                                     fit: BoxFit.cover,
                                    ),
                                  ),
-                               ),
-                               Positioned(
-                                 top: 105,
-                                 left: 10,
-                                 child: Row(
-                                   children: [
-                                     Icon(
-                                       Icons.location_on_outlined,
-                                       color: Colors.white70,
-                                       size: 20,
-                                     ),
-                                     SizedBox(width: 2,),
-                                     Container(
-                                       width: width*.50,
-                                       child: Text("F2QM+HP2, Barisal - Pirojpur Hwy, Bhitabaria",
-                                         style: TextStyle(
-                                           fontSize: 10,
-                                           fontWeight: FontWeight.w400,
-                                           color: Colors.white,
-                                         ),
-                                       ),
-                                     ),
-                                   ],
+                                 Container(
+                                   height: 150,
+                                   width: width/1.3,
+                                   decoration: BoxDecoration(
+                                     borderRadius: BorderRadius.circular(10),
+                                     color: appColors.blactText.withOpacity(0.5),
+                                   ),
                                  ),
-                               ),
-                               Positioned(
-                                 top: 165,
-                                 left: 10,
-                                 right: 10,
-                                 child: Row(
-                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                   children: [
-                                     Row(
-                                       children: [
-                                         Icon(
-                                           Icons.watch_later_outlined,
-                                           color: Colors.white,
-                                           size: 20,
-                                         ),
-                                         SizedBox(width: 4,),
-                                         Text("20 Min",
+                                 // Positioned(
+                                 //   right: 10, top: 10,
+                                 //   child: Container(
+                                 //     padding: EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                                 //     decoration: BoxDecoration(
+                                 //       borderRadius: BorderRadius.circular(10),
+                                 //       color: appColors.mainColor,
+                                 //     ),
+                                 //     child: Center(child: Text("4.5*", style: TextStyle(color: Colors.white),)),
+                                 //   ),
+                                 // ),
+                                 Positioned(
+                                   top: 80,
+                                   left: 10,
+                                   child: Text("${snapshot.data[index]["shopName"]}",
+                                     style: TextStyle(
+                                       fontSize: 14,
+                                       fontWeight: FontWeight.w400,
+                                       color: Colors.white,
+                                     ),
+                                   ),
+                                 ),
+                                 Positioned(
+                                   top: 105,
+                                   left: 10,
+                                   child: Row(
+                                     children: [
+                                       Icon(
+                                         Icons.location_on_outlined,
+                                         color: Colors.white70,
+                                         size: 20,
+                                       ),
+                                       SizedBox(width: 2,),
+                                       Container(
+                                         width: width*.50,
+                                         child: Text("F2QM+HP2, Barisal - Pirojpur Hwy, Bhitabaria",
                                            style: TextStyle(
-                                             fontSize: 12,
+                                             fontSize: 10,
                                              fontWeight: FontWeight.w400,
                                              color: Colors.white,
                                            ),
                                          ),
-                                       ],
-                                     ),
-                                     Text("৳৪৫০",
-                                       style: TextStyle(
-                                           fontWeight: FontWeight.bold,
-                                           fontSize: 14,
-                                           color: Colors.white
                                        ),
-                                     )
-                                   ],
+                                     ],
+                                   ),
                                  ),
-                               ),
+                                 Positioned(
+                                   top: 165,
+                                   left: 10,
+                                   right: 10,
+                                   child: Row(
+                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                     children: [
+                                       Row(
+                                         children: [
+                                           Icon(
+                                             Icons.watch_later_outlined,
+                                             color: Colors.white,
+                                             size: 20,
+                                           ),
+                                           SizedBox(width: 4,),
+                                           Text("20 Min",
+                                             style: TextStyle(
+                                               fontSize: 12,
+                                               fontWeight: FontWeight.w400,
+                                               color: Colors.white,
+                                             ),
+                                           ),
+                                         ],
+                                       ),
+                                       Text("৳৪৫০",
+                                         style: TextStyle(
+                                             fontWeight: FontWeight.bold,
+                                             fontSize: 14,
+                                             color: Colors.white
+                                         ),
+                                       )
+                                     ],
+                                   ),
+                                 ),
 
-                             ],
+                               ],
+                             ),
                            ),
                          );
                        }
@@ -1047,7 +1488,8 @@ class _HomeScreenState extends State<HomeScreen> {
                      itemBuilder: (context, index){
                        return Bounce(
                          duration: Duration(milliseconds: 80),
-                         onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>SingleFoods())),
+                         onPressed: ()=>
+                             Get.to(()=>SingleFoods(id: '1',)),
                          child: Container(
                            width: 170,
                            height: 300,

@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
+import 'facvourite.dart';
+
 class Profile extends StatelessWidget {
 
   @override
@@ -97,7 +99,9 @@ class Profile extends StatelessWidget {
                 customeItems(icon: Icon(Icons.list_alt_outlined,color: Colors.black,), text: 'Your orders'),
                 //customeItems(icon: Icon(Icons.local_offer_outlined,color: Colors.black,), text: 'Offers',onClicked: ()=>Get.to(OfferView())),
                 customeItems(icon: Icon(Icons.notifications,color: Colors.black,), text: 'Notifications'),
-                customeItems(icon: Icon(Icons.favorite_border_outlined,color: Colors.black,), text: 'Favorite'),
+                customeItems(icon: Icon(Icons.favorite_border_outlined,color: Colors.black,), text: 'Favorite',onClicked: (){
+                  Get.to(()=>favourites());
+                }),
                 customeItems(icon: Icon(Icons.favorite_border_outlined,color: Colors.black,), text: 'Chat Box'),
                 customeItems(icon: Icon(Icons.info_outline,color: Colors.black,), text: 'About'),
               ],

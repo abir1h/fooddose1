@@ -70,13 +70,19 @@ class OnboardPage extends StatelessWidget {
         next:  Icon(Icons.arrow_forward, size: 25,),
         onDone: () => onDone(context),
         curve: Curves.bounceOut,
+        onSkip:  () => onskip(context),
       ),
     );
   }
 
   void onDone(context) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('ON_BOARDING', false);
+    await prefs.setBool('ON_BOARDING', true);
+    Get.to(()=>SelectNewAddress());
+  }
+  void onskip(context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('ON_BOARDING', true);
     Get.to(()=>SelectNewAddress());
   }
 }

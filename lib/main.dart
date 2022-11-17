@@ -28,7 +28,7 @@ class App extends StatelessWidget {
       builder: (BuildContext context, Orientation orientation, DeviceType deviceType) {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
-          home: LoginPages(),
+          home: SplashPage(),
         );
     },
     );

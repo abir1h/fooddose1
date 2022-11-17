@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:food_dose/view/home-screen.dart';
@@ -28,12 +29,12 @@ class AuthService {
     print('step1');
 
     var response=await http.post(
-      Uri.parse('https://fooddoose.payrapay.com/simple-user/login'),
+      Uri.parse('https://api.fooddoose.com/simple-user/login'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
       body: jsonEncode({
-        "user":{
+        "userInfo":{
           "displayName":name,
           "email": email,
           "uid": uid
@@ -45,7 +46,9 @@ class AuthService {
      print(response.body);
      var data = jsonDecode(response.body);
     if(data['success']==true){
-      saveprefs(data['accessToken'],data['userData']['name'],data['userData']['email'],data['userData']['uid'],data['refreshtoken']);
+
+      print(data['refreshtoken']);
+      saveprefs(data['accessToken'],data['userData']['displayName'],data['userData']['email'],data['userData']['_id'],data['refreshtoken']);
       Get.to(()=>SelectNewAddress());
     }else{
       print(response.body);
@@ -64,6 +67,7 @@ class AuthService {
   Future signInWithGoogle() async {
     // Trigger the authentication flow
     try {
+      print('done');
       final GoogleSignInAccount? googleUser =
           await GoogleSignIn(scopes: <String>["email"]).signIn();
 
@@ -79,11 +83,25 @@ class AuthService {
       print(user);
       createFunction(googleUser.displayName,googleUser.email,googleUser.id);
 
+
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+      print('done');
+      var uid=FirebaseAuth.instance.currentUser!.uid;
+
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(googleUser.email)
+          .set({
+        'name':googleUser.displayName,
+        'email':googleUser.email,
+        'google_id':googleUser.id,
+        'uid':uid
+      });
+
 
       // Once signed in, return the UserCredential
       return await FirebaseAuth.instance.signInWithCredential(credential);

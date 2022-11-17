@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:food_dose/Utility/colors..dart';
 import 'package:food_dose/app_config.dart';
 import 'package:food_dose/view/home-screen.dart';
 import 'package:food_dose/view/onboarding_page.dart';
 import 'package:food_dose/widget/buttom-navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -71,8 +73,8 @@ class _SelectNewAddressState extends State<SelectNewAddress> {
     print("Working");
     
     await Geolocator.requestPermission().then((value) {
-      print("Curent location is get");
-      
+      print("Currents location is get");
+
     }).onError((error, stackTrace) {
       print("error $error");
     } );
@@ -110,38 +112,54 @@ class _SelectNewAddressState extends State<SelectNewAddress> {
             trafficEnabled:true,
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
+
             onTap:(value)async{
-              isLocation = true;
               getAddressFromLatLng(context, value.latitude, value.longitude);
 
+              if(location!.contains("Keraniganj")&& location!=null){
+                isLocation = true;
+
+                _marker.add(
+                    Marker(
+                        markerId:MarkerId("2"),
+                        position: LatLng(value.latitude, value.longitude),
+                        infoWindow: InfoWindow(
+                            title: "Current Location"
+                        )
+                    )
+                );
 
 
-              _marker.add(
-                  Marker(
-                      markerId:MarkerId("2"),
-                      position: LatLng(value.latitude, value.longitude),
-                      infoWindow: InfoWindow(
-                          title: "Current Location"
-                      )
-                  )
-              );
+                final CameraPosition _kLake = CameraPosition(
+                    bearing: 192.8334901395799,
+                    target: LatLng(value.latitude, value.longitude),
+                    tilt: 59.440717697143555,
+                    zoom: 19.151926040649414);
 
-
-              final CameraPosition _kLake = CameraPosition(
-                  bearing: 192.8334901395799,
+                //google map
+                CameraPosition cameraPosition = CameraPosition(
                   target: LatLng(value.latitude, value.longitude),
-                  tilt: 59.440717697143555,
-                  zoom: 19.151926040649414);
+                  zoom: 19.4746,
+                );
+                final GoogleMapController controller = await _controller.future;
+                controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
 
-              //google map
-              CameraPosition cameraPosition = CameraPosition(
-                target: LatLng(value.latitude, value.longitude),
-                zoom: 19.4746,
-              );
-              final GoogleMapController controller = await _controller.future;
-              controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+                setState(() {});
 
-              setState(() {});
+              }else{
+                Fluttertoast.showToast(
+                    msg: "Please pick location from keraniganj only",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0
+                );
+              }
+
+
+              location!.contains("Keraniganj")?print('Contains'):print("Not Contains");
 
             },
 
@@ -266,7 +284,7 @@ class _SelectNewAddressState extends State<SelectNewAddress> {
             InkWell(
               onTap: (){
 
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>AppBottomNavigation(index: 0,)));
+                Get.to(()=>AppBottomNavigation(index: 0,));
               },
               child: Container(
                   margin: EdgeInsets.only(left: width/4, right: width/4, bottom: 30),
